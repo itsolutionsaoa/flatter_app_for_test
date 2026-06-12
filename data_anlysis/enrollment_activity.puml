@@ -1,0 +1,85 @@
+@startuml "Enrollment Workflow"
+header Education ERP System
+title Student Admission and Enrollment Activity (BR-001, BR-002, BR-008, BR-020)
+skinparam backgroundColor #FAFBFC
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #4B5563
+skinparam ActivityBorderColor #374151
+skinparam ActivityBackgroundColor #FFFFFF
+skinparam ActivityDiamondBackgroundColor #EFF6FF
+skinparam ActivityDiamondBorderColor #2563EB
+skinparam NoteBackgroundColor #FFFBEB
+skinparam NoteBorderColor #F59E0B
+skinparam PartitionBackgroundColor #F8FAFC
+skinparam PartitionBorderColor #CBD5E1
+
+start
+partition "Applicant / Parent" #EFF6FF {
+  :Applicant or admissions staff starts online application;
+  :Capture personal, guardian, prior education,\nrequested campus/stage/grade,\ntransport and hostel requests;
+  :Upload required identity, academic,\nand supporting documents;
+}
+
+if (Required data and documents complete?) then (yes)
+  partition "Admissions + Platform" #F5F3FF {
+    :Submit application in EDU_ADM;
+    :Set status to SUBMITTED;
+    :Archive documents in EDU_DOC;
+    :Send submission confirmation via EDU_COMM;
+  }
+else (no)
+  :Show validation errors and missing document list;
+  stop
+endif
+
+partition "Registrar Review" #DBEAFE {
+  :Admissions team reviews application and documents;
+  :Record document verification and review notes;
+}
+
+if (Assessment or interview required?) then (yes)
+  partition "Academic Review" #DCFCE7 {
+    :Schedule assessment/interview;
+    :Notify applicant/parent;
+    :Capture result;
+  }
+endif
+
+if (Admission decision?) then (approved)
+  partition "Enrollment Confirmation" #EFF6FF {
+    :Approve application and generate admission offer;
+    :Create or link EDU_CORE user accounts\nfor student and parent;
+    :Convert applicant to STUDENT in EDU_ADM;
+    :Assign admission number and active status;
+  }
+
+  fork
+    #DCFCE7:Create class enrollment request\nin EDU_ACA;
+  fork again
+    #FEF3C7:Generate fee invoice and installments\nin EDU_FIN;
+  fork again
+    #DCFCE7:Provision LMS access\nin EDU_LMS;
+  fork again
+    #CCFBF1:Create hostel request if selected\nin EDU_HST;
+  fork again
+    #CCFBF1:Create transport request if selected\nin EDU_TRN;
+  fork again
+    #EDE9FE:Send admission letter, invoice,\nand portal access notification;
+  fork again
+    #EDE9FE:Refresh enrollment and finance KPIs\nin EDU_RPT;
+  end fork
+
+  :Parent/student complete payment or confirmation steps;
+  :Registrar confirms class/section assignment;
+  stop
+elseif (waitlisted)
+  :Set status to WAITLISTED;
+  :Notify applicant/parent;
+  stop
+else (rejected)
+  :Set status to REJECTED;
+  :Send rejection notice;
+  stop
+endif
+@enduml

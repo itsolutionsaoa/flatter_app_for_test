@@ -1,0 +1,214 @@
+@startuml
+header Education ERP System
+title Use Case Diagram
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam backgroundColor #FAFBFC
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #4B5563
+skinparam ActorBorderColor #374151
+skinparam UsecaseBorderColor #374151
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam PackageBorderColor #94A3B8
+skinparam PackageFontColor #111827
+skinparam RectangleBorderColor #94A3B8
+skinparam RectangleBackgroundColor #FFFFFF
+skinparam NoteBackgroundColor #FFFBEB
+skinparam NoteBorderColor #F59E0B
+
+' Color key:
+' Blue = student lifecycle and portals
+' Green = academic and learning
+' Amber = finance and accounting
+' Teal = HR and operations
+' Violet = platform governance
+
+actor "Applicant" as Applicant #DBEAFE
+actor "Student" as Student #DBEAFE
+actor "Parent /\nGuardian" as Parent #DBEAFE
+actor "Teacher /\nFaculty" as Teacher #DCFCE7
+
+actor "Registrar /\nAdmissions" as Registrar #DBEAFE
+actor "Academic\nAdmin" as AcademicAdmin #DCFCE7
+actor "Finance\nOfficer" as Finance #FEF3C7
+actor "HR\nOfficer" as HR #CCFBF1
+actor "Procurement\nOfficer" as Procurement #CCFBF1
+actor "Inventory /\nAsset Manager" as Inventory #CCFBF1
+actor "Transport\nManager" as Transport #CCFBF1
+actor "Library\nManager" as Library #CCFBF1
+actor "Hostel\nManager" as Hostel #CCFBF1
+actor "Communication\nManager" as Communication #EDE9FE
+actor "Executive /\nManagement" as Executive #EDE9FE
+actor "System\nAdministrator" as Admin #EDE9FE
+
+rectangle "Education ERP Platform" {
+  package "Access and Portals" #EFF6FF {
+    usecase "Authenticate and\nAuthorize User" as UC_AUTH
+    usecase "Use Student Portal" as UC_STUDENT_PORTAL
+    usecase "Use Parent Portal" as UC_PARENT_PORTAL
+    usecase "Use Faculty Portal" as UC_FACULTY_PORTAL
+    usecase "Use Admin Portal" as UC_ADMIN_PORTAL
+  }
+
+  package "Student Lifecycle\nBR-001, BR-002" #EFF6FF {
+    usecase "Submit Online\nApplication" as UC_APPLY
+    usecase "Review Application\nand Documents" as UC_REVIEW_APP
+    usecase "Admit Applicant\nand Create Student" as UC_ADMIT
+    usecase "Manage Student,\nGuardian, and Documents" as UC_SIS
+    usecase "Manage Transfer,\nWithdrawal, Graduation" as UC_STUDENT_STATUS
+  }
+
+  package "Academic and Learning\nBR-003 to BR-007, BR-012" #F0FDF4 {
+    usecase "Manage Academic\nStructure and Curriculum" as UC_ACADEMIC
+    usecase "Manage Timetables\nand Exam Schedules" as UC_TIMETABLE
+    usecase "Record Attendance\nand Absences" as UC_ATTENDANCE
+    usecase "Manage Exams,\nGrades, Reports" as UC_GRADES
+    usecase "Manage LMS Content,\nAssignments, Forums" as UC_LMS
+    usecase "Manage Faculty\nAssignments and Workload" as UC_FACULTY
+  }
+
+  package "Finance and Accounting\nBR-008, BR-009" #FFFBEB {
+    usecase "Configure Fees,\nDiscounts, Installments" as UC_FEE_SETUP
+    usecase "Generate Invoices,\nReceipts, Statements" as UC_BILLING
+    usecase "Collect Payments\nand Track Balances" as UC_COLLECTIONS
+    usecase "Manage GL, Journals,\nVouchers, Cost Centers" as UC_ACCOUNTING
+    usecase "Approve Refunds,\nWaivers, Adjustments" as UC_FIN_APPROVALS
+  }
+
+  package "HR and Operations\nBR-013 to BR-019" #F0FDFA {
+    usecase "Manage HR, Payroll,\nLeave, Performance" as UC_HR
+    usecase "Manage Procurement\nand Suppliers" as UC_PROCUREMENT
+    usecase "Manage Inventory,\nStock, Supplies" as UC_INVENTORY
+    usecase "Manage Assets,\nDepreciation, Maintenance" as UC_ASSETS
+    usecase "Manage Transport\nRoutes and Vehicles" as UC_TRANSPORT
+    usecase "Manage Library\nCatalog and Loans" as UC_LIBRARY
+    usecase "Manage Hostel\nRooms and Occupancy" as UC_HOSTEL
+  }
+
+  package "Platform Governance\nBR-020 to BR-025" #F5F3FF {
+    usecase "Send Notifications\nand Announcements" as UC_COMM
+    usecase "Manage Document\nArchive" as UC_DOCS
+    usecase "View Reports,\nDashboards, KPIs" as UC_REPORTS
+    usecase "Configure Users,\nRBAC, Workflows" as UC_ADMIN_CONFIG
+    usecase "Manage Security,\nPrivacy, Audit" as UC_SECURITY
+    usecase "Configure Multi-Campus,\nLanguage, Currency" as UC_LOCALIZATION
+    usecase "Manage External\nIntegrations" as UC_INTEGRATIONS
+  }
+}
+
+' Portal entry points
+Student --> UC_STUDENT_PORTAL
+Parent --> UC_PARENT_PORTAL
+Teacher --> UC_FACULTY_PORTAL
+Registrar --> UC_ADMIN_PORTAL
+AcademicAdmin --> UC_ADMIN_PORTAL
+Finance --> UC_ADMIN_PORTAL
+HR --> UC_ADMIN_PORTAL
+Procurement --> UC_ADMIN_PORTAL
+Inventory --> UC_ADMIN_PORTAL
+Transport --> UC_ADMIN_PORTAL
+Library --> UC_ADMIN_PORTAL
+Hostel --> UC_ADMIN_PORTAL
+Communication --> UC_ADMIN_PORTAL
+Executive --> UC_ADMIN_PORTAL
+Admin --> UC_ADMIN_PORTAL
+
+UC_STUDENT_PORTAL ..> UC_AUTH : <<include>>
+UC_PARENT_PORTAL ..> UC_AUTH : <<include>>
+UC_FACULTY_PORTAL ..> UC_AUTH : <<include>>
+UC_ADMIN_PORTAL ..> UC_AUTH : <<include>>
+
+' Applicant and student lifecycle
+Applicant --> UC_APPLY
+UC_APPLY ..> UC_DOCS : <<include>>
+Registrar --> UC_REVIEW_APP
+Registrar --> UC_ADMIT
+Registrar --> UC_SIS
+Registrar --> UC_STUDENT_STATUS
+
+' Student, parent, and teacher portal capabilities
+UC_STUDENT_PORTAL ..> UC_SIS : <<include>>
+UC_STUDENT_PORTAL ..> UC_TIMETABLE : <<include>>
+UC_STUDENT_PORTAL ..> UC_ATTENDANCE : <<include>>
+UC_STUDENT_PORTAL ..> UC_GRADES : <<include>>
+UC_STUDENT_PORTAL ..> UC_LMS : <<include>>
+UC_STUDENT_PORTAL ..> UC_COLLECTIONS : <<include>>
+UC_STUDENT_PORTAL ..> UC_TRANSPORT : <<extend>>
+UC_STUDENT_PORTAL ..> UC_LIBRARY : <<extend>>
+UC_STUDENT_PORTAL ..> UC_HOSTEL : <<extend>>
+
+UC_PARENT_PORTAL ..> UC_SIS : <<include>>
+UC_PARENT_PORTAL ..> UC_ATTENDANCE : <<include>>
+UC_PARENT_PORTAL ..> UC_GRADES : <<include>>
+UC_PARENT_PORTAL ..> UC_BILLING : <<include>>
+UC_PARENT_PORTAL ..> UC_COLLECTIONS : <<include>>
+UC_PARENT_PORTAL ..> UC_COMM : <<include>>
+
+UC_FACULTY_PORTAL ..> UC_FACULTY : <<include>>
+UC_FACULTY_PORTAL ..> UC_TIMETABLE : <<include>>
+UC_FACULTY_PORTAL ..> UC_ATTENDANCE : <<include>>
+UC_FACULTY_PORTAL ..> UC_GRADES : <<include>>
+UC_FACULTY_PORTAL ..> UC_LMS : <<include>>
+UC_FACULTY_PORTAL ..> UC_COMM : <<include>>
+
+' Back-office ownership
+AcademicAdmin --> UC_ACADEMIC
+AcademicAdmin --> UC_TIMETABLE
+AcademicAdmin --> UC_GRADES
+
+Finance --> UC_FEE_SETUP
+Finance --> UC_BILLING
+Finance --> UC_COLLECTIONS
+Finance --> UC_ACCOUNTING
+Finance --> UC_FIN_APPROVALS
+
+HR --> UC_HR
+Procurement --> UC_PROCUREMENT
+Inventory --> UC_INVENTORY
+Inventory --> UC_ASSETS
+Transport --> UC_TRANSPORT
+Library --> UC_LIBRARY
+Hostel --> UC_HOSTEL
+Communication --> UC_COMM
+Communication --> UC_DOCS
+
+Executive --> UC_REPORTS
+
+Admin --> UC_ADMIN_CONFIG
+Admin --> UC_SECURITY
+Admin --> UC_LOCALIZATION
+Admin --> UC_INTEGRATIONS
+Admin --> UC_REPORTS
+
+' Cross-cutting behavior
+UC_ADMIT ..> UC_BILLING : <<include>>
+UC_ADMIT ..> UC_LMS : <<include>>
+UC_ADMIT ..> UC_COMM : <<include>>
+UC_ADMIT ..> UC_REPORTS : <<include>>
+
+UC_ATTENDANCE ..> UC_COMM : <<include>>
+UC_GRADES ..> UC_COMM : <<include>>
+UC_BILLING ..> UC_COMM : <<include>>
+UC_COLLECTIONS ..> UC_ACCOUNTING : <<include>>
+UC_HR ..> UC_ACCOUNTING : <<include>>
+UC_PROCUREMENT ..> UC_INVENTORY : <<include>>
+UC_PROCUREMENT ..> UC_ACCOUNTING : <<include>>
+UC_INVENTORY ..> UC_ACCOUNTING : <<include>>
+UC_ASSETS ..> UC_ACCOUNTING : <<include>>
+UC_REPORTS ..> UC_SECURITY : <<include>>
+
+note bottom of UC_LOCALIZATION
+  Covers multi-campus,
+  multi-language, and
+  multi-currency scope.
+end note
+
+note bottom of UC_SECURITY
+  Covers RBAC, MFA,
+  privacy, audit logs,
+  and sensitive data access.
+end note
+
+@enduml
